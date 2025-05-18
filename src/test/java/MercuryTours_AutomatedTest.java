@@ -8,6 +8,8 @@ import java.util.List;
 
 public class MercuryTours_AutomatedTest {
     private WebDriver driver;
+    private String testUsername = "Jaibascript";
+    private String testPassword = "123456";
 
     By registerLinkLocator = By.linkText("REGISTER");
     By registerPageLocator = By.xpath("//img[@src='images/mast_register.gif']");
@@ -21,7 +23,7 @@ public class MercuryTours_AutomatedTest {
     By signInButtonLocator = By.name("submit");
 
     @BeforeEach
-    public void setUps()  {
+    public void setUp()  {
         System.setProperty("webdriver.chrome.driver", ".\\src\\test\\resources\\chromedriver.exe");
         this.driver = new ChromeDriver();
         this.driver.manage().window().maximize();
@@ -30,7 +32,7 @@ public class MercuryTours_AutomatedTest {
 
     @AfterEach
     public void tearDown() {
-        //driver.quit();
+        driver.quit();
     }
 
     @Test
@@ -44,9 +46,9 @@ public class MercuryTours_AutomatedTest {
         }
 
         if (driver.findElement(registerPageLocator).isDisplayed()) {
-            driver.findElement(registerUsernameLocator).sendKeys("Jaibascript");
-            driver.findElement(registerPasswordLocator).sendKeys("123456");
-            driver.findElement(registerConfirmPasswordLocator).sendKeys("123456");
+            driver.findElement(registerUsernameLocator).sendKeys(this.testUsername);
+            driver.findElement(registerPasswordLocator).sendKeys(this.testPassword);
+            driver.findElement(registerConfirmPasswordLocator).sendKeys(this.testPassword);
             driver.findElement(registerButtonLocator).click();
         }
         else {
@@ -60,8 +62,8 @@ public class MercuryTours_AutomatedTest {
     @Test
     public void signInSuccessfulTest () {
         if (driver.findElement(loginUserLocator).isDisplayed()) {
-            driver.findElement(loginUserLocator).sendKeys("Jaibascript");
-            driver.findElement(loginPasswordLocator).sendKeys("123456");
+            driver.findElement(loginUserLocator).sendKeys(this.testUsername);
+            driver.findElement(loginPasswordLocator).sendKeys(this.testPassword);
             driver.findElement(signInButtonLocator).click();
 
             try {
@@ -72,6 +74,69 @@ public class MercuryTours_AutomatedTest {
 
             List<WebElement> h3List = driver.findElements(By.tagName("h3"));
             assertEquals("Login Successfully", h3List.get(0).getText());
+        }
+        else {
+            fail("Login page was not found");
+        }
+    }
+
+    @Test
+    public void signInWrongUserNameTest () {
+        if (driver.findElement(loginUserLocator).isDisplayed()) {
+            driver.findElement(loginUserLocator).sendKeys("Pale");
+            driver.findElement(loginPasswordLocator).sendKeys(this.testPassword);
+            driver.findElement(signInButtonLocator).click();
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                fail("Thread cannot sleep");
+            }
+
+            List<WebElement> spans = driver.findElements(By.tagName("span"));
+            assertEquals("Enter your userName and password correct", spans.get(0).getText());
+        }
+        else {
+            fail("Login page was not found");
+        }
+    }
+
+    @Test
+    public void signInWrongPasswordTest () {
+        if (driver.findElement(loginUserLocator).isDisplayed()) {
+            driver.findElement(loginUserLocator).sendKeys(this.testUsername);
+            driver.findElement(loginPasswordLocator).sendKeys("123457");
+            driver.findElement(signInButtonLocator).click();
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                fail("Thread cannot sleep");
+            }
+
+            List<WebElement> spans = driver.findElements(By.tagName("span"));
+            assertEquals("Enter your userName and password correct", spans.get(0).getText());
+        }
+        else {
+            fail("Login page was not found");
+        }
+    }
+
+    @Test
+    public void signInWrongUsernameAndPasswordTest () {
+        if (driver.findElement(loginUserLocator).isDisplayed()) {
+            driver.findElement(loginUserLocator).sendKeys("Pale");
+            driver.findElement(loginPasswordLocator).sendKeys("123457");
+            driver.findElement(signInButtonLocator).click();
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                fail("Thread cannot sleep");
+            }
+
+            List<WebElement> spans = driver.findElements(By.tagName("span"));
+            assertEquals("Enter your userName and password correct", spans.get(0).getText());
         }
         else {
             fail("Login page was not found");
